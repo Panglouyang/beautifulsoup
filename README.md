@@ -29,7 +29,7 @@ print(soup.prettify())
 - API implementation: `bs4/`
 - New tests: `bs4/tests/test_replacer.py`
 - Applications and report: [apps/m2/M2-README.md](apps/m2/M2-README.md)
-- Submission: [Milestone 2 release](https://github.com/Panglouyang/beautifulsoup/releases/tag/milestone-2)
+- Submission: [Milestone 2 release](https://github.com/Panglouyang/beautifulsoup/releases/tag/milestone-2-v2)
 
 Use this same repository for Milestones 2–5, with a new tag/release for each.
 The repository is private; grant the instructor/TA access before submission.
