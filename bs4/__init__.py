@@ -23,6 +23,7 @@ __license__ = "MIT"
 __all__ = [
     "AttributeResemblesVariableWarning",
     "BeautifulSoup",
+    "SoupReplacer",
     "Comment",
     "Declaration",
     "ProcessingInstruction",
@@ -88,6 +89,7 @@ from .element import (
     TemplateString,
 )
 from .formatter import Formatter
+from .replacer import SoupReplacer
 from .filter import (
     ElementFilter,
     SoupStrainer,
@@ -215,6 +217,7 @@ class BeautifulSoup(Tag):
         from_encoding: Optional[_Encoding] = None,
         exclude_encodings: Optional[_Encodings] = None,
         element_classes: Optional[Dict[Type[PageElement], Type[PageElement]]] = None,
+        replacer: Optional[SoupReplacer] = None,
         **kwargs: Any,
     ):
         """Constructor.
@@ -254,6 +257,11 @@ class BeautifulSoup(Tag):
          like to be instantiated instead as the parse tree is
          built. This is useful for subclassing Tag or NavigableString
          to modify default behavior.
+
+        :param replacer: A SoupReplacer that renames tags as they close
+         during parsing. Supported by html.parser and lxml builders.
+         Filtering with parse_only uses original names. The html5lib
+         builder uses a different tree construction API and is unsupported.
 
         :param kwargs: For backwards compatibility purposes, the
          constructor accepts certain keyword arguments used in
@@ -435,6 +443,11 @@ class BeautifulSoup(Tag):
         self.known_xml = self.is_xml
         self._namespaces = dict()
         self.parse_only = parse_only
+        if replacer is not None and not isinstance(replacer, SoupReplacer):
+            raise TypeError("replacer must be a SoupReplacer or None")
+        if replacer is not None and builder.NAME == "html5lib":
+            raise NotImplementedError("SoupReplacer supports html.parser and lxml, not html5lib")
+        self.replacer = replacer
 
         if hasattr(markup, "read"):  # It's a file-type object.
             markup = markup.read()
@@ -804,6 +817,11 @@ class BeautifulSoup(Tag):
         # print("Pop", tag.name)
         if self.tagStack:
             self.currentTag = self.tagStack[-1]
+        # Keep the original name until the parser has matched the closing
+        # tag and updated its counters/stacks. This also covers unfinished
+        # tags closed by _feed at end of input, without a second tree walk.
+        if self.replacer is not None and tag is not self:
+            self.replacer.replace(tag)
         return self.currentTag
 
     def pushTag(self, tag: Tag) -> None:
