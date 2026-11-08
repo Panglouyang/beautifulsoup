@@ -31,8 +31,14 @@ print(soup.prettify())
 - Applications and report: [apps/m2/M2-README.md](apps/m2/M2-README.md)
 - Submission: [Milestone 2 release](https://github.com/Panglouyang/beautifulsoup/releases/tag/milestone-2-v2)
 
+## Milestone 3
+
+- Functional API: `bs4/replacer.py`
+- Six new test cases: `bs4/tests/test_replacer_functional.py`
+- Task 7 application and technical brief: [apps/m3/M3-README.md](apps/m3/M3-README.md)
+- Submission: [Milestone 3 release](https://github.com/Panglouyang/beautifulsoup/releases/tag/milestone-3)
+
 Use this same repository for Milestones 2–5, with a new tag/release for each.
-The repository is private; grant the instructor/TA access before submission.
 
 [Beautiful Soup documentation](https://www.crummy.com/software/BeautifulSoup/bs4/doc/).
 Original license: [MIT](LICENSE).

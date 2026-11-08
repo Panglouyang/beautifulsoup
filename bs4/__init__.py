@@ -258,7 +258,7 @@ class BeautifulSoup(Tag):
          built. This is useful for subclassing Tag or NavigableString
          to modify default behavior.
 
-        :param replacer: A SoupReplacer that renames tags as they close
+        :param replacer: A SoupReplacer that transforms tags as they close
          during parsing. Supported by html.parser and lxml builders.
          Filtering with parse_only uses original names. The html5lib
          builder uses a different tree construction API and is unsupported.
