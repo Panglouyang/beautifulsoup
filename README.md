@@ -38,6 +38,13 @@ print(soup.prettify())
 - Task 7 application and technical brief: [apps/m3/M3-README.md](apps/m3/M3-README.md)
 - Submission: [Milestone 3 release](https://github.com/Panglouyang/beautifulsoup/releases/tag/milestone-3)
 
+## Milestone 4
+
+- Iterable soup (`for node in soup` visits every node, lazily, without a list): `BeautifulSoup.__iter__` in `bs4/__init__.py`
+- Five new unit tests: `bs4/tests/test_soup_iteration.py`
+- Application and technical brief: [apps/m4/M4-README.md](apps/m4/M4-README.md)
+- Submission: [Milestone 4 release](https://github.com/Panglouyang/beautifulsoup/releases/tag/milestone-4)
+
 Use this same repository for Milestones 2–5, with a new tag/release for each.
 
 [Beautiful Soup documentation](https://www.crummy.com/software/BeautifulSoup/bs4/doc/).

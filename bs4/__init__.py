@@ -515,6 +515,54 @@ class BeautifulSoup(Tag):
         clone.original_encoding = self.original_encoding
         return clone
 
+    def __iter__(self) -> Iterator[PageElement]:
+        """Iterate over every node in the document, one node at a time.
+
+        Nodes are produced lazily in document order (a pre-order,
+        depth-first walk): each `Tag` comes before its children, and
+        strings, comments, doctypes and other `NavigableString`
+        subclasses are produced along with tags. The `BeautifulSoup`
+        object itself is not produced. Each call returns a new,
+        independent iterator.
+
+        No list (or stack) of nodes is built. The walk follows the
+        tree's own ``contents[0]``, ``next_sibling`` and ``parent``
+        links, so besides the generator itself it keeps only a few node
+        references: O(1) extra memory however large or deeply nested
+        the document is, and O(1) amortized time per node.
+
+        The next step is chosen only after the loop body returns, so
+        the body may change the node it was just given: if that node is
+        extracted, decomposed or moved, its subtree is skipped and the
+        walk continues where the node used to be; children added to it
+        are visited. Nodes added later in the document are also visited.
+
+        Unlike `Tag.__iter__`, which yields only direct children, this
+        visits the whole tree. ``len(soup)`` and ``x in soup`` keep
+        their `Tag` meaning (direct children); use ``soup.contents`` or
+        ``soup.children`` when you only want the top level.
+        """
+        node: Optional[PageElement] = self.contents[0] if self.contents else None
+        while node is not None:
+            # Remember the node's position before the caller sees it.
+            parent = node.parent
+            next_sibling = node.next_sibling
+            yield node
+
+            # getattr: decompose() clears the node's attributes.
+            still_in_place = getattr(node, "parent", None) is parent
+            if still_in_place and isinstance(node, Tag) and node.contents:
+                node = node.contents[0]
+                continue
+            if still_in_place:
+                next_sibling = node.next_sibling
+            # No later sibling: climb until an ancestor has one, but
+            # never past the BeautifulSoup object itself.
+            while next_sibling is None and parent is not None and parent is not self:
+                next_sibling = parent.next_sibling
+                parent = parent.parent
+            node = next_sibling
+
     def __getstate__(self) -> Dict[str, Any]:
         # Frequently a tree builder can't be pickled.
         d = dict(self.__dict__)
